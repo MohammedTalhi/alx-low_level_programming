@@ -1,49 +1,50 @@
 #include "lists.h"
 
 /**
- * insert_dnodeint_at_index - Inserts a new node at a given position in a doubly linked list.
- * @h: Pointer to a pointer to the head of the doubly linked list.
- * @idx: Index at which the new node should be inserted.
- * @n: Value of the new node.
- * Return: Address of the newly inserted node.
+ * insert_dnodeint_at_index - inserts new node at given position
+ * @h: head of list
+ * @idx: index of new node
+ * @n: value of new node
+ * Return: address of new node, or NULL if it failed
  */
 dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 {
-	dlistint_t *current = *h; // Pointer to track the current node
-	dlistint_t *new_node = malloc(sizeof(dlistint_t)); // Allocate memory for the new node
-	unsigned int count;
+	dlistint_t *neew = NULL;
+	dlistint_t *head;
+	unsigned int j;
 
-	if (!h || !new_node)
-		return NULL; // Return NULL if invalid parameters or memory allocation fails
-
-	new_node->n = n; // Set the value of the new node
-
-	if (!(*h)) // If the list is empty
+	if (idx == 0)
+		neew = add_dnodeint(h, n);
+	else
 	{
-		new_node->prev = NULL;
-		new_node->next = NULL;
-		*h = new_node;
-		return new_node;
-	}
-
-	if (idx == 0) // If index is 0, insert at the beginning
-		return add_dnodeint(h, n);
-
-	for (count = 0; current; count++)
-	{
-		if (count == idx) // If the index matches the desired position
+		head = *h;
+		j = 1;
+		if (head != NULL)
+			while (head->prev != NULL)
+				head = head->prev;
+		while (head != NULL)
 		{
-			new_node->prev = current->prev;
-			(current->prev)->next = new_node;
-			current->prev = new_node;
-			new_node->next = current;
-			return new_node;
+			if (j == idx)
+			{
+				if (head->next == NULL)
+					neew = add_dnodeint_end(h, n);
+				else
+				{
+					neew = malloc(sizeof(dlistint_t));
+					if (neew != NULL)
+					{
+						neew->n = n;
+						neew->next = head->next;
+						neew->prev = head;
+						head->next->prev = neew;
+						head->next = neew;
+					}
+				}
+				break;
+			}
+			head = head->next;
+			j++;
 		}
-		else if (!current->next && count + 1 == idx) // If the index is at the end of the list
-			return add_dnodeint_end(h, n);
-
-		current = current->next; // Move to the next node
 	}
-	return NULL; // Return NULL if index is out of range
+	return (neew);
 }
-

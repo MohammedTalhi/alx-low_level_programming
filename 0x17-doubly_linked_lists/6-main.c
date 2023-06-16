@@ -27,3 +27,4 @@ int main(void)
     free_dlistint(head);
     head = NULL;
     return (EXIT_SUCCESS);
+}
